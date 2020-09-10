@@ -25,59 +25,37 @@
 #include <functional>
 #include <optional>
 
-
 template<typename T>
 
 class Lazy
-
 {
-
     std::once_flag m_initFlag;
-
     std::function<T()> m_initFunc;
-
     std::optional<T> m_value;
 
 public:
 
     Lazy(std::function<T()> initFunc) : m_initFunc(std::move(initFunc)) {}
-
     std::optional<T>* operator->() { return get_or_init(); }
-
     T operator*() { return get_or_init()->value(); }
 
 private:
 
     std::optional<T>* get_or_init()
-
     {
-
         try
-
         {
-
             std::call_once(m_initFlag, [this]() { std::cout << "Call once!" << std::endl; m_value = m_initFunc(); });
-
         }
-
         catch (std::exception& ex)
-
         {
-
             //std::cerr << "Error calling once: " << ex.what() << std::endl;
-
         }
-
         catch (...)
-
         {
-
             //std::cerr << "Error calling once" << std::endl;
-
         }
 
         return &m_value;
-
     }
-
 };
