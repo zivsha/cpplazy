@@ -45,15 +45,11 @@ private:
     {
         try
         {
-            std::call_once(m_initFlag, [this]() { std::cout << "Call once!" << std::endl; m_value = m_initFunc(); });
-        }
-        catch (std::exception& ex)
-        {
-            //std::cerr << "Error calling once: " << ex.what() << std::endl;
+            std::call_once(m_initFlag, [this]() { m_value = m_initFunc(); });
         }
         catch (...)
         {
-            //std::cerr << "Error calling once" << std::endl;
+            
         }
 
         return &m_value;
