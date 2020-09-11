@@ -58,5 +58,5 @@ A hedaer-only, C#-like, generic class for lazy initialization in C++17.
 
 ## Installation
 
- Simply copy [`cpplazy.hpp`](include/cpplazy/cpplazy.hpp)) to your project.
- See [demo project](demo/demo.cpp) for an examples.
+ Simply copy [`cpplazy.hpp`](include/cpplazy/cpplazy.hpp) to your project.
+ See [demo project](demo/) and [tests](tests/tests.cpp) for examples.
