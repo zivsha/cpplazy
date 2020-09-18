@@ -21,12 +21,12 @@ TEST_CASE("Compilation Check")
 {
     SECTION("Declarations")
     {
-        lazy<int>                   l0{ []() { return 42;                               } };
-        lazy<double>                l1{ []() { return 3.14;                             } };
-        lazy<char>                  l2{ []() { return '\n';                             } };
-        lazy<std::string>           l3{ []() { return "lazy"s;                          } };
-        lazy<std::array<int, 2>>    l4{ []() { return std::array<int, 2 >{ 1,2 };       } };
-        lazy<std::unique_ptr<int>>  l5{ []() { return std::make_unique<int>(12);        } };
+        lazy<int>                   l0{ [] { return 42;                               } };
+        lazy<double>                l1{ [] { return 3.14;                             } };
+        lazy<char>                  l2{ [] { return '\n';                             } };
+        lazy<std::string>           l3{ [] { return "lazy"s;                          } };
+        lazy<std::array<int, 2>>    l4{ [] { return std::array<int, 2 >{ 1,2 };       } };
+        lazy<std::unique_ptr<int>>  l5{ [] { return std::make_unique<int>(12);        } };
     }
 
     SECTION("noncopyable")
@@ -36,13 +36,13 @@ TEST_CASE("Compilation Check")
 
     SECTION("moveable")
     {
-        lazy<int> l{ []() { return 42; } };
+        lazy<int> l{ [] { return 42; } };
         lazy<int> l2 = std::move(l);
     }
 
     SECTION("Lambda")
     {
-        lazy<int> l{ []() { return 42; } };
+        lazy<int> l{ [] { return 42; } };
         REQUIRE(*l == 42);
     }
 
@@ -99,13 +99,13 @@ TEST_CASE("Compilation Check")
 
     SECTION("Dereference")
     {
-        lazy<int> l{ []() { return 42; } };
+        lazy<int> l{ [] { return 42; } };
         REQUIRE(*l == 42);
     }
 
     SECTION("Arrow Operator")
     {
-        lazy<int> l{ []() { return 42; } };
+        lazy<int> l{ [] { return 42; } };
         REQUIRE(l->value() == 42);
     }
 }
@@ -113,7 +113,7 @@ TEST_CASE("Compilation Check")
 TEST_CASE("Lazy Initialization")
 {
     int init_count = 0;
-    lazy<int> l{ [&]() { ++init_count; return 42; } };
+    lazy<int> l{ [&] { ++init_count; return 42; } };
     REQUIRE(init_count == 0);
 
     for (size_t i = 0; i < 50; i++)
@@ -136,7 +136,7 @@ TEST_CASE("Lazy Initialization")
 TEST_CASE("Thread safe initialization")
 {
     int init_count = 0;
-    cpplazy::lazy<int> l{ [&]() { ++init_count; return 42; } };
+    cpplazy::lazy<int> l{ [&] { ++init_count; return 42; } };
 
     std::vector<std::thread> threads;
     std::mutex lock;
@@ -144,7 +144,7 @@ TEST_CASE("Thread safe initialization")
     bool requirements_met = true;
     for (size_t i = 0; i < num_threads; i++)
     {
-        threads.emplace_back([&]() {
+        threads.emplace_back([&] {
             for (size_t i = 0; i < 50; i++)
             {
                 int v = *l;
@@ -177,7 +177,7 @@ TEST_CASE("const access")
     auto dereference_op = [&](const lazy<throw_when_non_const_accessed>& s) { s1 = (*s).get(); };
     auto arrow_op = [&](const lazy<throw_when_non_const_accessed>& s) { s1 = s->value().get(); };
 
-    lazy<throw_when_non_const_accessed> lazy_s{ [&]() { ++init_count;  return value; } };
+    lazy<throw_when_non_const_accessed> lazy_s{ [&] { ++init_count;  return value; } };
     REQUIRE(init_count == 0);
 
     REQUIRE(s1 != value.s);
@@ -199,7 +199,7 @@ TEST_CASE("Move an non initialized lazy")
 {
     const int Value = 42;
     int init_count = 0;
-    lazy<int> l{ [&]() { ++init_count;  return Value; } };
+    lazy<int> l{ [&] { ++init_count;  return Value; } };
     REQUIRE(init_count == 0);
     lazy<int> l2 = std::move(l);
     int value = *l2;
@@ -210,7 +210,7 @@ TEST_CASE("Move an already initialized lazy")
 {
     const int Value = 42;
     int init_count = 0;
-    lazy<int> l{ [&]() { ++init_count;  return Value; } };
+    lazy<int> l{ [&] { ++init_count;  return Value; } };
     int init_value = *l;
     REQUIRE(init_value == Value);
     REQUIRE(init_count == 1);
@@ -225,7 +225,7 @@ TEST_CASE("Move an already initialized lazy")
 
 TEST_CASE("README Simple API")
 {
-    cpplazy::lazy<std::string> lazy_string{ []() { return "very expensive initialization here...."s; } };
+    cpplazy::lazy<std::string> lazy_string{ [] { return "very expensive initialization here...."s; } };
     //Same API as `std::optional"
     std::string data = *lazy_string;
     std::string data2 = lazy_string->value();
@@ -233,7 +233,7 @@ TEST_CASE("README Simple API")
 
 TEST_CASE("README Generic lazy initialized type")
 {
-    cpplazy::lazy<std::array<int, 6>> lazy_fib_seq{ []() { return std::array<int, 6>{ 0, 1, 1, 2, 3, 5 }; } };
+    cpplazy::lazy<std::array<int, 6>> lazy_fib_seq{ [] { return std::array<int, 6>{ 0, 1, 1, 2, 3, 5 }; } };
     //First 6 numbers of fibbonaci have not been created 
     std::array<int, 6> fib_seq = *lazy_fib_seq; //lazy object is initialized at (and only at) first usage
     std::array<int, 6> fib_seq2 = lazy_fib_seq->value(); //Returning the value, without re-initializing
@@ -242,9 +242,9 @@ TEST_CASE("README Generic lazy initialized type")
 
 TEST_CASE("README Thread safe access")
 {
-    cpplazy::lazy<int> the_answer_to_life_the_universeand_everything{ []() { std::cout << "Computing answer...Finished"  << std::endl; return 42; } };
+    cpplazy::lazy<int> the_answer_to_life_the_universeand_everything{ [] { std::cout << "Computing answer...Finished"  << std::endl; return 42; } };
 
-    auto ask_question = [&]() { std::cout << the_answer_to_life_the_universeand_everything->value() << std::endl; };
+    auto ask_question = [&] { std::cout << the_answer_to_life_the_universeand_everything->value() << std::endl; };
     std::thread hitchhiker_1(ask_question);
     std::thread hitchhiker_2(ask_question);
 
@@ -261,7 +261,7 @@ TEST_CASE("README Failed initialization handling")
 {
     using namespace std;
 
-    cpplazy::lazy<string> lazy_config_value{ []() ->string { throw invalid_argument("can't open config file"); } };
+    cpplazy::lazy<string> lazy_config_value{ []()->string { throw invalid_argument("can't open config file"); } };
 
     string the_value = lazy_config_value->value_or("oops"); //value will be fallback to: "oops"
 

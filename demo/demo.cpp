@@ -45,7 +45,7 @@ using namespace demo_helpers;
 int main()
 {
     //Create the lazy object with a lambda function that returns the type of the lazy object
-    cpplazy::lazy<large_object> lazy_large_object{ []() { return large_object(std::this_thread::get_id()); } };
+    cpplazy::lazy<large_object> lazy_large_object{ [] { return large_object(std::this_thread::get_id()); } };
 
     //The following lines show additional way to initialize the lazy object (to get the same result as above):
     cpplazy::lazy<large_object> lazy_large_object2{ &create_large_object };
@@ -62,7 +62,7 @@ int main()
     std::cout << "Creating, and starting " << num_threads << " threads that will access the same large_object now\n" << std::endl;
         for (size_t i = 0; i < num_threads; i++)
     {
-        threads.emplace_back([&]() {
+        threads.emplace_back([&] {
             //This is the thread code
 
             large_object& obj = *lazy_large_object;

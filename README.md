@@ -3,7 +3,7 @@ A hedaer-only, C#-like, generic class for lazy initialization in C++17.
 
 ### Simple API
 ```cpp
-    lazy<std::string> lazy_string{ []() { return "very expensive initialization here...."s; } };
+    lazy<std::string> lazy_string{ [] { return "very expensive initialization here...."s; } };
     //Same API as `std::optional"
     std::string data = *lazy_string;
     std::string data2 = lazy_string->value();
@@ -11,7 +11,7 @@ A hedaer-only, C#-like, generic class for lazy initialization in C++17.
 
 ### Generic lazy initialized type 
 ```cpp
-    lazy<std::array<int, 6>> lazy_fib_seq{ []() { return std::array<int, 6>{ 0, 1, 1, 2, 3, 5 }; } };
+    lazy<std::array<int, 6>> lazy_fib_seq{ [] { return std::array<int, 6>{ 0, 1, 1, 2, 3, 5 }; } };
     //First 6 numbers of fibbonaci have not been created 
     std::array<int, 6> fib_seq = *lazy_fib_seq; //lazy object is initialized at (and only at) first usage
     std::array<int, 6> fib_seq2 = lazy_fib_seq->value(); //Returning the value, without re-initializing
@@ -21,9 +21,9 @@ A hedaer-only, C#-like, generic class for lazy initialization in C++17.
 
 ### Thread safe access
 ```cpp
-    lazy<int> the_answer_to_life_the_universeand_everything{ []() { std::cout << "Computing answer...Finished"  << std::endl; return 42; } };
+    lazy<int> the_answer_to_life_the_universeand_everything{ [] { std::cout << "Computing answer...Finished"  << std::endl; return 42; } };
 
-    auto ask_question = [&]() { std::cout << the_answer_to_life_the_universeand_everything->value() << std::endl; };
+    auto ask_question = [&] { std::cout << the_answer_to_life_the_universeand_everything->value() << std::endl; };
     std::thread hitchhiker_1(ask_question);
     std::thread hitchhiker_2(ask_question);
 
